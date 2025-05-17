@@ -44,7 +44,7 @@ export default function AuthScreen() {
             disableDeviceFallback:false,
            });
            if(auth.success){
-            router.replace('/')
+            router.replace('/home')
            }else{
             setError('Authentication failed. Please try again.')
            }
