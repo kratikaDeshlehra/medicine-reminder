@@ -1,9 +1,9 @@
 import { Ionicons } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useEffect, useRef, } from 'react'
-import { ScrollView, View, Text, TouchableOpacity, Animated, Dimensions, StyleSheet } from 'react-native'
+import { useEffect, useRef,useState} from 'react'
+import { ScrollView, View, Text, TouchableOpacity, Animated, Dimensions, StyleSheet, Modal } from 'react-native'
 import Svg, { Circle } from 'react-native-svg'
-import { Link,useRouter } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 
 
 
@@ -115,6 +115,10 @@ function CircularProgress({
 }
 
 export default function HomeScreen() {
+
+    const [todaysMedications, setTodaysMedications] = useState<Medication[]>([]);
+    const router = useRouter();
+
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             <LinearGradient colors={["#1a8e2d", "#146922"]} style={styles.header}>
@@ -164,8 +168,89 @@ export default function HomeScreen() {
                 </View>
             </View>
 
+            <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>Today`s Schedule</Text>
+                    <Link href="/calendar" asChild>
+                        <TouchableOpacity>
+                            <Text style={styles.seeAllButton}>See All</Text>
+                        </TouchableOpacity>
+                    </Link>
+                </View>
+                {todaysMedications.length === 0 ? (
+                    <View style={styles.emptyState}>
+                        <Ionicons name="medical-outline" size={48} color="#ccc" />
+                        <Text style={styles.emptyStateText}>
+                            No medications scheduled for today
+                        </Text>
+                        <Link href="/medications/add" asChild>
+                            <TouchableOpacity style={styles.addMedicationButton}>
+                                <Text style={styles.addMedicationButtonText}>
+                                    Add Medication
+                                </Text>
+                            </TouchableOpacity>
+                        </Link>
+                    </View>
+                ) : (
+                    todaysMedications.map((medication) => {
+                        const taken = isDoseTaken(medication.id);
+                        return (
+                            <View key={medication.id} style={styles.doseCard}>
+                                <View
+                                    style={[
+                                        styles.doseBadge,
+                                        { backgroundColor: `${medication.color}15` },
+                                    ]}
+                                >
+                                    <Ionicons
+                                        name="medical"
+                                        size={24}
+                                        color={medication.color}
+                                    />
+                                </View>
+                                <View style={styles.doseInfo}>
+                                    <View>
+                                        <Text style={styles.medicineName}>{medication.name}</Text>
+                                        <Text style={styles.dosageInfo}>{medication.dosage}</Text>
+                                    </View>
+                                    <View style={styles.doseTime}>
+                                        <Ionicons name="time-outline" size={16} color="#666" />
+                                        <Text style={styles.timeText}>{medication.times[0]}</Text>
+                                    </View>
+                                </View>
+                                {taken ? (
+                                    <View style={[styles.takenBadge]}>
+                                        <Ionicons
+                                            name="checkmark-circle"
+                                            size={20}
+                                            color="#4CAF50"
+                                        />
+                                        <Text style={styles.takenText}>Taken</Text>
+                                    </View>
+                                ) : (
+                                    <TouchableOpacity
+                                        style={[
+                                            styles.takeDoseButton,
+                                            { backgroundColor: medication.color },
+                                        ]}
+                                        onPress={() => handleTakeDose(medication)}
+                                    >
+                                        <Text style={styles.takeDoseText}>Take</Text>
+                                    </TouchableOpacity>
+                                )}
+                            </View>
+                        );
+                    })
+                )}
+            </View>
 
-        </ScrollView>
+
+
+
+
+
+
+        </ScrollView >
     )
 }
 
