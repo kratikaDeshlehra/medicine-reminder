@@ -77,7 +77,6 @@ export async function scheduleMedicationReminder(
           hour: hours,
           minute: minutes,
           repeats: true,
-          type: 'calendar'
         } as any,
       });
 

@@ -3,6 +3,7 @@
     "name": "medicine-reminder",
     "slug": "medicine-reminder",
     "version": "1.0.0",
+    "projectId":"e2ffc53c-21c8-42a9-8424-b60f81ef9d5c",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "medicinereminder",
@@ -37,6 +38,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "e2ffc53c-21c8-42a9-8424-b60f81ef9d5c"
+      }
+    },
+    "owner": "kratika24"
   }
 }

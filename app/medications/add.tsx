@@ -6,6 +6,8 @@ import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { useRouter } from "expo-router";
+import { addMedication } from "@/utils/storage";
+import { scheduleMedicationReminder } from "@/utils/notifications";
 
 
 const { width } = Dimensions.get("window");
@@ -86,7 +88,7 @@ export default function AddMedicationScreen() {
                         ]}
                         onPress={() => {
                             setSelectedFrequency(freq.label);
-                            //     setForm({ ...form, frequency: freq.label });
+                            setForm({ ...form, frequency: freq.label });
                         }}
                     >
                         <View
@@ -128,7 +130,7 @@ export default function AddMedicationScreen() {
                         ]}
                         onPress={() => {
                             setSelectedDuration(dur.label);
-                            //     setForm({ ...form, duration: dur.label });
+                            setForm({ ...form, duration: dur.label });
                         }}
                     >
                         <Text
@@ -236,9 +238,9 @@ export default function AddMedicationScreen() {
                 { cancelable: false }
             );
         }
-        finally{
+        finally {
             setIsSubmitting(false);
-            
+
         }
 
     }
@@ -266,7 +268,7 @@ export default function AddMedicationScreen() {
                                 placeholder="Medication Name"
                                 placeholderTextColor={"#999"}
                                 value={form.name}
-                                onChange={(text) => {
+                                onChangeText={(text) => {
                                     setForm({ ...form, name: text })
                                     if (errors.name) {
                                         setErrors({ ...errors, name: "" })
@@ -285,7 +287,7 @@ export default function AddMedicationScreen() {
                                 placeholder="Dosage (e.g., 500mg)"
                                 placeholderTextColor={"#999"}
                                 value={form.dosage}
-                                onChange={(text) => {
+                                onChangeText={(text) => {
                                     setForm({ ...form, dosage: text })
                                     if (errors.name) {
                                         setErrors({ ...errors, dosage: "" })
@@ -437,7 +439,7 @@ export default function AddMedicationScreen() {
 
 
                 <View style={styles.footer}>
-                    <TouchableOpacity style={[styles.saveButton, isSubmitting && styles.saveButtonDisabled]}>
+                    <TouchableOpacity style={[styles.saveButton, isSubmitting && styles.saveButtonDisabled]} onPress={() => handleSave()}>
                         <LinearGradient colors={["#1a8e2d", "#146922"]} style={styles.saveButtonGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
                             <Text style={styles.saveButtonText}>
                                 {isSubmitting ? 'Adding...' : 'Add medication'}
@@ -515,9 +517,10 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 18,
         fontWeight: "700",
-        color: "#1a1a1a",
+        color: "green",
         marginBottom: 15,
         marginTop: 10,
+        marginLeft:20
     },
     mainInput: {
         fontSize: 20,
@@ -528,6 +531,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flexWrap: "wrap",
         marginHorizontal: -5,
+        justifyContent:'center',
+        alignItems:'center'
     },
     optionCard: {
         width: (width - 60) / 2,
@@ -599,6 +604,7 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         padding: 15,
         marginTop: 15,
+        margin:20,
         borderWidth: 1,
         borderColor: "#e0e0e0",
         shadowColor: "#000",
@@ -632,16 +638,20 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.05,
         shadowRadius: 8,
         elevation: 2,
+        marginLeft:15,
+        marginRight:15,
     },
     switchRow: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        
     },
     switchLabelContainer: {
         flexDirection: "row",
         alignItems: "center",
         flex: 1,
+        
     },
     iconContainer: {
         width: 40,
@@ -685,6 +695,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.05,
         shadowRadius: 8,
         elevation: 2,
+        marginLeft:10,
+        marginRight:10
     },
     textArea: {
         height: 100,
@@ -743,13 +755,16 @@ const styles = StyleSheet.create({
         marginTop: 15,
     },
     timesContainer: {
-        marginTop: 20,
+        marginTop: 10,
+        marginLeft:15,
+        marginRight:15,
     },
     timesTitle: {
         fontSize: 16,
         fontWeight: "600",
-        color: "#333",
+        color: "green",
         marginBottom: 10,
+        marginLeft:10,
     },
     timeButton: {
         flexDirection: "row",
