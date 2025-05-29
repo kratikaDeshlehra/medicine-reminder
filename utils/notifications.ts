@@ -39,6 +39,7 @@ export async function registerForPushNotificationsAsync(): Promise<
                 importance: Notifications.AndroidImportance.MAX,
                 vibrationPattern: [0, 250, 250, 250],
                 lightColor: "#1a8e2d",
+                sound : 'default'
             });
         }
 
@@ -72,6 +73,7 @@ export async function scheduleMedicationReminder(
           title: "Medication Reminder",
           body: `Time to take ${medication.name} (${medication.dosage})`,
           data: { medicationId: medication.id },
+          sound : 'default'
         },
         trigger: {
           hour: hours,

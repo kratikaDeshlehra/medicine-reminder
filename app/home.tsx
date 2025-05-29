@@ -239,7 +239,7 @@ export default function HomeScreen() {
 
     const progress =
         todaysMedications.length > 0
-            ? completedDoses / (todaysMedications.length * 2)
+            ? completedDoses / (todaysMedications.length )
             : 0;
 
     return (
@@ -264,7 +264,7 @@ export default function HomeScreen() {
                     <CircularProgress
                         progress={progress}
                         completedDoses={completedDoses}
-                        totalDoses={todaysMedications.length * 2}
+                        totalDoses={todaysMedications.length }
                     />
                 </View>
             </LinearGradient>

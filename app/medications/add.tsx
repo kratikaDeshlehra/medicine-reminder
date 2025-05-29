@@ -204,7 +204,11 @@ export default function AddMedicationScreen() {
                 currentSupply: form.currentSupply ? Number(form.currentSupply) : 0,
                 totalSupply: form.currentSupply ? Number(form.currentSupply) : 0,
                 refillAt: form.refillAt ? Number(form.refillAt) : 0,
-                startDate: form.startDate.toISOString(),
+                startDate: new Date(
+                    form.startDate.getFullYear(),
+                    form.startDate.getMonth(),
+                    form.startDate.getDate()
+                ).toISOString(),
                 color: randomColor,
             };
 
@@ -520,7 +524,7 @@ const styles = StyleSheet.create({
         color: "green",
         marginBottom: 15,
         marginTop: 10,
-        marginLeft:20
+        marginLeft: 20
     },
     mainInput: {
         fontSize: 20,
@@ -531,8 +535,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flexWrap: "wrap",
         marginHorizontal: -5,
-        justifyContent:'center',
-        alignItems:'center'
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     optionCard: {
         width: (width - 60) / 2,
@@ -604,7 +608,7 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         padding: 15,
         marginTop: 15,
-        margin:20,
+        margin: 20,
         borderWidth: 1,
         borderColor: "#e0e0e0",
         shadowColor: "#000",
@@ -638,20 +642,20 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.05,
         shadowRadius: 8,
         elevation: 2,
-        marginLeft:15,
-        marginRight:15,
+        marginLeft: 15,
+        marginRight: 15,
     },
     switchRow: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        
+
     },
     switchLabelContainer: {
         flexDirection: "row",
         alignItems: "center",
         flex: 1,
-        
+
     },
     iconContainer: {
         width: 40,
@@ -695,8 +699,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.05,
         shadowRadius: 8,
         elevation: 2,
-        marginLeft:10,
-        marginRight:10
+        marginLeft: 10,
+        marginRight: 10
     },
     textArea: {
         height: 100,
@@ -756,15 +760,15 @@ const styles = StyleSheet.create({
     },
     timesContainer: {
         marginTop: 10,
-        marginLeft:15,
-        marginRight:15,
+        marginLeft: 15,
+        marginRight: 15,
     },
     timesTitle: {
         fontSize: 16,
         fontWeight: "600",
         color: "green",
         marginBottom: 10,
-        marginLeft:10,
+        marginLeft: 10,
     },
     timeButton: {
         flexDirection: "row",
