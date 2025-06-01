@@ -219,9 +219,9 @@ export default function HomeScreen() {
     );
 
 
-    const handleTakeDose = async (medication: Medication) => {
+    const handleTakeDose = async (dose : DoseHistory) => {
         try {
-            await recordDose(medication.id, true, new Date().toISOString());
+            await recordDose(dose.id);
             await loadMedications(); // Reload data after recording dose
         } catch (error) {
             console.error("Error recording dose:", error);
@@ -238,8 +238,8 @@ export default function HomeScreen() {
 
 
     const progress =
-        todaysMedications.length > 0
-            ? completedDoses / (todaysMedications.length )
+        doseHistory.length > 0
+            ? completedDoses / (doseHistory.length )
             : 0;
 
     return (
@@ -264,7 +264,7 @@ export default function HomeScreen() {
                     <CircularProgress
                         progress={progress}
                         completedDoses={completedDoses}
-                        totalDoses={todaysMedications.length }
+                        totalDoses={doseHistory.length}
                     />
                 </View>
             </LinearGradient>
@@ -304,7 +304,7 @@ export default function HomeScreen() {
                         </TouchableOpacity>
                     </Link>
                 </View>
-                {todaysMedications.length === 0 ? (
+                {doseHistory.length === 0 ? (
                     <View style={styles.emptyState}>
                         <Ionicons name="medical-outline" size={48} color="#ccc" />
                         <Text style={styles.emptyStateText}>
@@ -319,10 +319,18 @@ export default function HomeScreen() {
                         </Link>
                     </View>
                 ) : (
-                    todaysMedications.map((medication) => {
-                        const taken = isDoseTaken(medication.id);
+                    doseHistory.map((dose) => {
+                        const medication = medications.find(m => m.id === dose.medicationId);
+
+                        const doseTime = new Date(dose.timestamp).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                        });
+                        if (!medication) return null;
+
+
                         return (
-                            <View key={medication.id} style={styles.doseCard}>
+                            <View key={dose.id} style={styles.doseCard}>
                                 <View
                                     style={[
                                         styles.doseBadge,
@@ -342,10 +350,10 @@ export default function HomeScreen() {
                                     </View>
                                     <View style={styles.doseTime}>
                                         <Ionicons name="time-outline" size={16} color="#666" />
-                                        <Text style={styles.timeText}>{medication.times[0]}</Text>
+                                        <Text style={styles.timeText}>{doseTime}</Text>
                                     </View>
                                 </View>
-                                {taken ? (
+                                {dose.taken ? (
                                     <View style={[styles.takenBadge]}>
                                         <Ionicons
                                             name="checkmark-circle"
@@ -360,7 +368,7 @@ export default function HomeScreen() {
                                             styles.takeDoseButton,
                                             { backgroundColor: medication.color },
                                         ]}
-                                        onPress={() => handleTakeDose(medication)}
+                                        onPress={() => handleTakeDose(dose)}
                                     >
                                         <Text style={styles.takeDoseText}>Take</Text>
                                     </TouchableOpacity>

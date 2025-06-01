@@ -6,7 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { useRouter } from "expo-router";
-import { addMedication } from "@/utils/storage";
+import { addDoses, addMedication } from "@/utils/storage";
 import { scheduleMedicationReminder } from "@/utils/notifications";
 
 
@@ -53,6 +53,9 @@ export default function AddMedicationScreen() {
     const router = useRouter();
 
 
+    const [editingTimeIndex, setEditingTimeIndex] = useState<number | null>(null);
+
+
     const [selectedFrequency, setSelectedFrequency] = useState("");
     const [selectedDuration, setSelectedDuration] = useState("");
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -88,7 +91,7 @@ export default function AddMedicationScreen() {
                         ]}
                         onPress={() => {
                             setSelectedFrequency(freq.label);
-                            setForm({ ...form, frequency: freq.label });
+                            setForm({ ...form, frequency: freq.label, times: freq.times, });
                         }}
                     >
                         <View
@@ -214,6 +217,7 @@ export default function AddMedicationScreen() {
 
             await addMedication(medicationData);
 
+            await addDoses(medicationData);
 
             if (medicationData.reminderEnabled) {
                 await scheduleMedicationReminder(medicationData);
@@ -258,7 +262,7 @@ export default function AddMedicationScreen() {
 
             <View style={styles.content}>
                 <View style={styles.header}>
-                    <TouchableOpacity style={styles.backButton} onPress={()=> router.back()}>
+                    <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
                         <Ionicons name='chevron-back' size={28} color="#1a8e2d" />
                     </TouchableOpacity>
                     <Text style={styles.headerTitle}>New Medication</Text>
@@ -360,6 +364,7 @@ export default function AddMedicationScreen() {
                                             key={index}
                                             style={styles.timeButton}
                                             onPress={() => {
+                                                setEditingTimeIndex(index);
                                                 setShowTimePicker(true);
                                             }}
                                         >
@@ -374,26 +379,30 @@ export default function AddMedicationScreen() {
                             )}
 
 
-                            {showTimePicker && (
+                            {showTimePicker && editingTimeIndex != null && (
                                 <DateTimePicker mode='time'
                                     value={(() => {
-                                        const [hours, minutes] = form.times[0].split(":").map(Number);
+                                        const [hours, minutes] = form.times[editingTimeIndex].split(":").map(Number);
                                         const date = new Date();
                                         date.setHours(hours, minutes, 0, 0);
                                         return date;
                                     })()}
                                     onChange={(event, date) => {
                                         setShowTimePicker(false);
-                                        if (date) {
+                                        if (date && editingTimeIndex != null) {
                                             const newTime = date.toLocaleTimeString("default", {
                                                 hour: "2-digit",
                                                 minute: "2-digit",
                                                 hour12: false,
                                             });
-                                            setForm((prev) => ({
-                                                ...prev,
-                                                times: prev.times.map((t, i) => (i === 0 ? newTime : t)),
-                                            }));
+                                            setForm((prev) => {
+                                                const updatedTimes = [...prev.times];
+                                                updatedTimes[editingTimeIndex] = newTime;
+                                                return { ...prev, times: updatedTimes };
+                                            });
+
+                                            setEditingTimeIndex(null);
+
                                         }
                                     }
                                     }
