@@ -7,7 +7,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { addDoses, addMedication } from "@/utils/storage";
-import { scheduleMedicationReminder } from "@/utils/notifications";
+import { scheduleMedicationReminder, scheduleRefillReminder } from "@/utils/notifications";
 
 
 const { width } = Dimensions.get("window");
@@ -180,6 +180,20 @@ export default function AddMedicationScreen() {
             newErrors.duration = "Duration is required";
         }
 
+        if (form.refillReminder) {
+            if (!form.currentSupply) {
+                newErrors.currentSupply = 'Current supply is required for refill tracking'
+            }
+            if (!form.refillAt) {
+                newErrors.refillAt = 'Refill alert threshold is required';
+            }
+
+            if (Number(form.refillAt) >= Number(form.currentSupply)) {
+                newErrors.refillAt = "Refill alert must be less than current supply";
+            }
+
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
 
@@ -222,6 +236,10 @@ export default function AddMedicationScreen() {
             if (medicationData.reminderEnabled) {
                 await scheduleMedicationReminder(medicationData);
 
+            }
+
+            if (medicationData.refillReminder) {
+                await scheduleRefillReminder(medicationData);
             }
 
 
@@ -436,7 +454,98 @@ export default function AddMedicationScreen() {
                                 />
                             </View>
                         </View>
+                    </View>
 
+
+                    <View style={styles.section}>
+                        <View style={styles.card}>
+                            <View style={styles.switchRow}>
+                                <View style={styles.switchLabelContainer}>
+                                    <View style={styles.iconContainer}>
+                                        <Ionicons name='reload' size={20} color='#1a8e2d' />
+                                    </View>
+
+                                    <View>
+                                        <Text style={styles.switchLabel}>Refill Tracking</Text>
+                                        <Text style={styles.switchSubLabel}>Get notified when you need to refill</Text>
+                                    </View>
+                                </View>
+
+                                <Switch
+                                    value={form.refillReminder}
+                                    onValueChange={(value) => {
+                                        setForm({ ...form, refillReminder: value });
+                                        if (!value) {
+                                            setErrors({
+                                                ...errors,
+                                                currentSupply: "",
+                                                refillAt: "",
+                                            });
+                                        }
+                                    }}
+                                    trackColor={{ false: "#ddd", true: "#1a8e2d" }}
+                                    thumbColor="white" />
+                            </View>
+
+                            {form.refillReminder && (
+                                <View style={styles.refillInputs}>
+                                    <View style={styles.inputRow}>
+                                        <View style={[styles.inputRow, styles.flex1]}>
+                                            <TextInput
+                                                style={[
+                                                    styles.input,
+                                                    errors.currentSupply && styles.inputError,
+                                                ]}
+                                                placeholder="Current Supply"
+                                                placeholderTextColor="#999" keyboardType="numeric"
+                                                value={form.currentSupply}
+                                                onChangeText={(text) => {
+                                                    setForm({ ...form, currentSupply: text });
+                                                    if (errors.currentSupply) {
+                                                        setErrors({ ...errors, currentSupply: '' });
+                                                    }
+                                                }}
+                                            />
+
+                                            {errors.currentSupply && (
+                                                <Text style={styles.errorText}>
+                                                    {errors.currentSupply}
+                                                </Text>
+                                            )}
+                                        </View>
+
+                                        <View>
+
+                                            <TextInput
+                                                style={[
+                                                    styles.input,
+                                                    errors.refillAt && styles.inputError,
+                                                ]}
+                                                value={form.refillAt}
+                                                placeholder="Alert at"
+                                                placeholderTextColor="#999" keyboardType="numeric"
+                                                onChangeText={(text) => {
+                                                    setForm({ ...form, refillAt: text });
+                                                    if (errors.refillAt) {
+                                                        setErrors({ ...errors, refillAt: '' });
+                                                    }
+                                                }}
+
+                                            />{
+                                                errors.refillAt && (
+                                                    <Text style={styles.errorText}>{errors.refillAt}</Text>
+                                                )
+                                            }
+                                        </View>
+
+
+                                    </View>
+
+
+                                </View>
+
+                            )}
+                        </View>
                     </View>
 
 
@@ -688,7 +797,7 @@ const styles = StyleSheet.create({
     inputRow: {
         flexDirection: "row",
         marginTop: 15,
-        gap: 10,
+        gap:10,
     },
     flex1: {
         flex: 1,

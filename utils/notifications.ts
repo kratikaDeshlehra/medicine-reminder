@@ -3,51 +3,51 @@ import { Platform } from "react-native";
 import { Medication } from "./storage";
 
 Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: true,
-        shouldShowBanner: true,
-        shouldShowList: true
-    }),
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true
+  }),
 });
 
 export async function registerForPushNotificationsAsync(): Promise<
-    string | null
+  string | null
 > {
-    let token: string | null = null;
+  let token: string | null = null;
 
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  let finalStatus = existingStatus;
 
-    if (existingStatus !== "granted") {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
+  if (existingStatus !== "granted") {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+  }
+
+  if (finalStatus !== "granted") {
+    return null;
+  }
+
+  try {
+    const response = await Notifications.getExpoPushTokenAsync();
+    token = response.data;
+
+    if (Platform.OS === "android") {
+      await Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#1a8e2d",
+        sound: 'default'
+      });
     }
 
-    if (finalStatus !== "granted") {
-        return null;
-    }
-
-    try {
-        const response = await Notifications.getExpoPushTokenAsync();
-        token = response.data;
-
-        if (Platform.OS === "android") {
-            await Notifications.setNotificationChannelAsync("default", {
-                name: "default",
-                importance: Notifications.AndroidImportance.MAX,
-                vibrationPattern: [0, 250, 250, 250],
-                lightColor: "#1a8e2d",
-                sound : 'default'
-            });
-        }
-
-        return token;
-    } catch (error) {
-        console.error("Error getting push token:", error);
-        return null;
-    }
+    return token;
+  } catch (error) {
+    console.error("Error getting push token:", error);
+    return null;
+  }
 }
 
 
@@ -73,7 +73,7 @@ export async function scheduleMedicationReminder(
           title: "Medication Reminder",
           body: `Time to take ${medication.name} (${medication.dosage})`,
           data: { medicationId: medication.id },
-          sound : 'default'
+          sound: 'default'
         },
         trigger: {
           hour: hours,
@@ -111,7 +111,7 @@ export async function cancelMedicationReminders(
   } catch (error) {
     console.error("Error canceling medication reminders:", error);
   }
-} 
+}
 
 
 export async function updateMedicationReminders(
@@ -125,5 +125,29 @@ export async function updateMedicationReminders(
     await scheduleMedicationReminder(medication);
   } catch (error) {
     console.error("Error updating medication reminders:", error);
+  }
+}
+
+
+export async function scheduleRefillReminder(medication: Medication): Promise<string | undefined> {
+
+  if (!medication.refillReminder) return;
+  try {
+    if (medication.currentSupply <= medication.refillAt) {
+      const identifier = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'Refill Reminder',
+          body: `Your ${medication.name} supply is running low. Current supply: ${medication.currentSupply}`,
+          data: { medicationId: medication.id, type: "refill" },
+        },
+        trigger: null,
+      });
+      return identifier;
+    }
+
+  }
+  catch (error) {
+    console.error('Error scheduling refill reminder :', error);
+    return undefined;
   }
 }

@@ -5,7 +5,7 @@ import { ScrollView, View, Text, TouchableOpacity, Animated, Dimensions, StyleSh
 import Svg, { Circle } from 'react-native-svg'
 import { Link, useFocusEffect, useRouter } from 'expo-router'
 import { DoseHistory, getMedications, getTodaysDoses, Medication, recordDose } from '@/utils/storage'
-import { registerForPushNotificationsAsync, scheduleMedicationReminder } from '@/utils/notifications'
+import { registerForPushNotificationsAsync, scheduleMedicationReminder, scheduleRefillReminder } from '@/utils/notifications'
 
 
 
@@ -181,6 +181,10 @@ export default function HomeScreen() {
             for (const medication of medications) {
                 if (medication.reminderEnabled) {
                     await scheduleMedicationReminder(medication);
+                } 
+                if(medication.refillReminder){
+                    await scheduleRefillReminder(medication);
+                    
                 }
             }
         } catch (error) {
