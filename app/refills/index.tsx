@@ -26,7 +26,6 @@ export default function RefillTrackerScreen() {
         try {
             const allMedications = await getMedications();
             setMedications(allMedications);
-
         }
         catch (error) {
             console.error("Error loading medications :", error);
@@ -93,7 +92,7 @@ export default function RefillTrackerScreen() {
 
 
     return (
-        <View>
+        <View style={styles.container}>
             <LinearGradient colors={["#1a8e2d", "#146922"]}
                 style={styles.headerGradient}
                 start={{ x: 0, y: 0 }}
@@ -179,7 +178,7 @@ export default function RefillTrackerScreen() {
 
                                         <View style={styles.refillInfo}>
                                             <Text style={styles.refillLabel}>
-                                                Refill at : {medication.refillAt}%
+                                                Refill at : {medication.refillAt}
                                             </Text>
 
                                             {medication.lastRefillDate && (
@@ -207,9 +206,6 @@ export default function RefillTrackerScreen() {
                                     >
                                         <Text style={styles.refillButtonText}>Record Refill</Text>
                                     </TouchableOpacity>
-
-
-
                                 </View>
                             )
                         })
@@ -274,7 +270,9 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderRadius: 16,
         padding: 16,
-        marginBottom: 16,
+        marginBottom: 20,
+        margin:17,
+        gap:7,
         borderWidth: 1,
         borderColor: "#e0e0e0",
         shadowColor: "#000",
