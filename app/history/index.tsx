@@ -61,7 +61,16 @@ export default function HistoryScreen() {
 
 
     const groupedHistory = (() => {
-        const grouped = history.reduce((acc, dose) => {
+
+        const now = new Date();
+        const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        const filteredHistory = history.filter(dose => {
+            const doseDate = new Date(dose.timestamp);
+            const doseDay = new Date(doseDate.getFullYear(), doseDate.getMonth(), doseDate.getDate());
+            return doseDay <= todayDate;
+        });
+        const grouped = filteredHistory.reduce((acc, dose) => {
             const date = new Date(dose.timestamp).toDateString();
 
             if (!acc[date]) {
@@ -142,81 +151,86 @@ export default function HistoryScreen() {
 
 
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    {groupedHistory.map(([date, doses]) => (
-                        <View key={date} style={styles.dateGroup}>
-                            <Text style={styles.dateHeader}>
-                                {new Date(date).toLocaleDateString("default", {
-                                    weekday: "long",
-                                    month: "long",
-                                    day: "numeric",
-                                })}
-                            </Text>
+                    {groupedHistory.map(([date, doses]) => {
+
+                        const filteredDoses = doses.filter((dose) => {
+                            if (selectedFilter === "all") return true;
+                            if (selectedFilter === "taken") return dose.taken;
+                            if (selectedFilter === "missed") return !dose.taken;
+                            return true;
+                        });
+
+                        if (filteredDoses.length === 0) return null;
 
 
-                            {doses.filter((dose) => {
+                      return (
+                            <View key={date} style={styles.dateGroup}>
+                                <Text style={styles.dateHeader}>
+                                    {new Date(date).toLocaleDateString("default", {
+                                        weekday: "long",
+                                        month: "long",
+                                        day: "numeric",
+                                    })}
+                                </Text>
 
-                            
-                                if (selectedFilter === 'all') return true;
-                                if (selectedFilter === "taken") return dose.taken;
-                                if (selectedFilter === "missed") return !dose.taken;
-                                return true;
-                            }).map((dose) => (
-                                <View key={dose.id} style={styles.historyCard}>
-                                    <View>
 
-                                        <View style={styles.medicationInfo}>
+                                {filteredDoses.map((dose) => (
+                                    <View key={dose.id} style={styles.historyCard}>
+                                        <View>
 
-                                            <Text style={styles.medicationName}>{dose.medication?.name || "Unknown meducation"}</Text>
+                                            <View style={styles.medicationInfo}>
 
-                                            <Text style={styles.medicationDosage}>
-                                                {dose.medication?.dosage}
-                                            </Text>
+                                                <Text style={styles.medicationName}>{dose.medication?.name || "Unknown meducation"}</Text>
 
-                                            <Text style={styles.timeText}>
-                                                {new Date(dose.timestamp).toLocaleTimeString("default", {
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                })}
-                                            </Text>
-                                        </View>
+                                                <Text style={styles.medicationDosage}>
+                                                    {dose.medication?.dosage}
+                                                </Text>
 
-                                        <View style={styles.statusContainer}>
-                                            {dose.taken ? (
-                                                <View style={[
-                                                    styles.statusBadge,
-                                                    { backgroundColor: "#E8F5E9" },
-                                                ]}>
-                                                    <Ionicons
-                                                        name="checkmark-circle"
-                                                        size={16}
-                                                        color="#4CAF50"
-                                                    />
+                                                <Text style={styles.timeText}>
+                                                    {new Date(dose.timestamp).toLocaleTimeString("default", {
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                    })}
+                                                </Text>
+                                            </View>
 
-                                                    <Text style={[styles.statusText, { color: "#4CAF50" }]}>Taken</Text>
-                                                </View>
-                                            ) : (
-                                                <View style={[
-                                                    styles.statusBadge,
-                                                    { backgroundColor: "#FFEBEE" },
-                                                ]}>
-                                                    <Ionicons
-                                                        name="close-circle"
-                                                        size={16}
-                                                        color="#F44336"
-                                                    />
-                                                    <Text style={[styles.statusText, { color: "#F44336" }]}>
-                                                        Missed
-                                                    </Text>
-                                                </View>
-                                            )}
-                                        </View>
-                                    </View>
-                                </View>
+                                            <View style={styles.statusContainer}>
+                                                {dose.taken ? (
+                                                    <View style={[
+                                                        styles.statusBadge,
+                                                        { backgroundColor: "#E8F5E9" },
+                                                    ]}>
+                                                        <Ionicons
+                                                            name="checkmark-circle"
+                                                            size={16}
+                                                            color="#4CAF50"
+                                                        />
 
-                            ))}
+                                                        <Text style={[styles.statusText, { color: "#4CAF50" }]}>Taken</Text>
+                                                    </View>
+                                                ) : (
+                                                    <View style={[
+                                                        styles.statusBadge,
+                                                        { backgroundColor: "#FFEBEE" },
+                                                    ]}>
+                                                        <Ionicons
+                                                            name="close-circle"
+                                                            size={16}
+                                                            color="#F44336"
+                                                        />
+                                                        <Text style={[styles.statusText, { color: "#F44336" }]}>
+                                                            Missed
+                                                        </Text>
+                                                    </View>
+                                                )}
+                                            </View>
+                                        </View>    
+                                     </View>
 
-                        </View>
-                    ))}
+                                ))}
+                            </View>
+                        );
+                    })}
 
                     <View style={styles.clearDataContainer}>
                         <TouchableOpacity style={styles.clearDataButton}
@@ -225,10 +239,8 @@ export default function HistoryScreen() {
                             <Text>Clear All Data</Text>
                         </TouchableOpacity>
                     </View>
+                    </ScrollView>
 
-
-
-                </ScrollView>
             </View>
 
         </View>
