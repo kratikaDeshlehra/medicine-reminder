@@ -129,14 +129,13 @@ export default function CalendarScreen() {
                 const durationDays = parseInt(medication.duration.split(" ")[0]);
                 return (durationDays === -1 || (selectedDate >= medStartDate && selectedDate <=
                     new Date(
-                        medStartDate.getTime() + durationDays * 24 * 60 * 60 * 1000
+                        medStartDate.getTime() + (durationDays - 1) * 24 * 60 * 60 * 1000
                     )));
             })
             .map((medication) => {
-                const taken = dayDoses.some(
-                    (dose) => dose.medicationId === medication.id && dose.taken
-                );
-
+                // const taken = dayDoses.some(
+                //     (dose) => dose.medicationId === medication.id && dose.taken
+                // );
                 return (
                     <View key={medication.id} style={styles.medicationCard}>
                         <View
@@ -148,29 +147,60 @@ export default function CalendarScreen() {
                         <View style={styles.medicationInfo}>
                             <Text style={styles.medicationName}>{medication.name}</Text>
                             <Text style={styles.medicationDosage}>{medication.dosage}</Text>
-                            <Text style={styles.medicationTime}>{medication.times[0]}</Text>
+
+
+                            {medication.times.map((time, index) => {
+
+                                const timestamp = new Date(selectedDate);
+                                const [hour, minute] = time.split(":").map(Number);
+                                timestamp.setHours(hour, minute, 0, 0);
+
+
+                                const matchingDose = dayDoses.find(
+                                    (dose) =>
+                                        dose.medicationId === medication.id &&
+                                        new Date(dose.timestamp).getTime() === timestamp.getTime()
+                                );
+
+                                const taken = matchingDose?.taken;
+
+                                const formattedTime = new Date(timestamp).toLocaleTimeString("en-US", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: true,
+                                });
+
+                                return (
+                                    <View key={time} style={styles.doseTimeRow}>
+                                        <Text style={styles.medicationTime}>{formattedTime}</Text>
+                                        {taken ? (
+                                            <View style={styles.takenBadge}>
+                                                <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
+                                                <Text style={styles.takenText}>Taken</Text>
+                                            </View>
+                                        ) : (
+                                            <TouchableOpacity
+                                                style={[
+                                                    styles.takeDoseButton,
+                                                    { backgroundColor: medication.color },
+                                                ]}
+                                                onPress={async () => {
+                                                    if (matchingDose) {
+                                                        await recordDose(matchingDose.id);
+                                                        loadData();
+                                                    } else {
+                                                        console.warn("No matching dose found.");
+                                                    }
+                                                }}
+                                            >
+                                                <Text style={styles.takeDoseText}>Take</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                    </View>
+                                );
+                            })}
+
                         </View>
-                        {taken ? (
-                            <View style={styles.takenBadge}>
-                                <Ionicons name="checkmark-circle" size={20} color="#4CAF50" />
-                                <Text style={styles.takenText}>Taken</Text>
-                            </View>
-                        ) : (
-                            <TouchableOpacity
-                                style={[
-                                    styles.takeDoseButton,
-                                    { backgroundColor: medication.color },
-                                ]}
-                                onPress={async () => {
-                                    const timestamp = new Date(selectedDate);
-                                    timestamp.setHours(0, 0, 0, 0);
-                                    await recordDose(medication.id, true, timestamp.toISOString());
-                                    loadData();
-                                }}
-                            >
-                                <Text style={styles.takeDoseText}>Take</Text>
-                            </TouchableOpacity>
-                        )}
                     </View>
                 );
             });
@@ -262,6 +292,15 @@ export default function CalendarScreen() {
 }
 
 const styles = StyleSheet.create({
+
+    doseTimeRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginTop: 5,
+    },
+
+
     container: {
         flex: 1,
         backgroundColor: "#f8f9fa",

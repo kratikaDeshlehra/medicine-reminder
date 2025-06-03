@@ -25,7 +25,11 @@ export default function RefillTrackerScreen() {
     const loadMedications = useCallback(async () => {
         try {
             const allMedications = await getMedications();
-            setMedications(allMedications);
+
+            const filteredMedications = allMedications.filter(
+                (medication) => medication.refillReminder === true // or just `medication.refillTracking` if it's already a boolean
+            );
+            setMedications(filteredMedications);
         }
         catch (error) {
             console.error("Error loading medications :", error);
@@ -271,8 +275,8 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         padding: 16,
         marginBottom: 20,
-        margin:17,
-        gap:7,
+        margin: 17,
+        gap: 7,
         borderWidth: 1,
         borderColor: "#e0e0e0",
         shadowColor: "#000",
