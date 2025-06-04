@@ -181,10 +181,10 @@ export default function HomeScreen() {
             for (const medication of medications) {
                 if (medication.reminderEnabled) {
                     await scheduleMedicationReminder(medication);
-                } 
-                if(medication.refillReminder){
+                }
+                if (medication.refillReminder) {
                     await scheduleRefillReminder(medication);
-                    
+
                 }
             }
         } catch (error) {
@@ -223,7 +223,7 @@ export default function HomeScreen() {
     );
 
 
-    const handleTakeDose = async (dose : DoseHistory) => {
+    const handleTakeDose = async (dose: DoseHistory) => {
         try {
             await recordDose(dose.id);
             await loadMedications(); // Reload data after recording dose
@@ -243,7 +243,7 @@ export default function HomeScreen() {
 
     const progress =
         doseHistory.length > 0
-            ? completedDoses / (doseHistory.length )
+            ? completedDoses / (doseHistory.length)
             : 0;
 
     return (
@@ -400,24 +400,43 @@ export default function HomeScreen() {
                                 <Ionicons name="close" size={24} color="#333" />
                             </TouchableOpacity>
                         </View>
-                        {todaysMedications.map((medication) => (
-                            <View key={medication.id} style={styles.notificationItem}>
-                                <View style={styles.notificationIcon}>
-                                    <Ionicons name="medical" size={24} color={medication.color} />
-                                </View>
-                                <View style={styles.notificationContent}>
-                                    <Text style={styles.notificationTitle}>
-                                        {medication.name}
-                                    </Text>
-                                    <Text style={styles.notificationMessage}>
-                                        {medication.dosage}
-                                    </Text>
-                                    <Text style={styles.notificationTime}>
-                                        {medication.times[0]}
-                                    </Text>
-                                </View>
-                            </View>
-                        ))}
+
+                        <ScrollView showsVerticalScrollIndicator={false}>
+
+                            {doseHistory.map((dose) => {
+
+                                const medication = medications.find(
+                                    (med) => med.id === dose.medicationId
+                                );
+
+                                const doseTime = new Date(dose.timestamp).toLocaleTimeString([], {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                });
+                                if (!medication) return null;
+
+                                return (
+
+                                    <View key={medication.id} style={styles.notificationItem}>
+                                        <View style={styles.notificationIcon}>
+                                            <Ionicons name="medical" size={24} color={medication.color} />
+                                        </View>
+                                        <View style={styles.notificationContent}>
+                                            <Text style={styles.notificationTitle}>
+                                                {medication.name}
+                                            </Text>
+                                            <Text style={styles.notificationMessage}>
+                                                {medication.dosage}
+                                            </Text>
+                                            <Text style={styles.notificationTime}>
+                                                {doseTime}
+                                            </Text>
+                                        </View>
+                                    </View>
+
+                                );
+                            })}
+                        </ScrollView>
                     </View>
                 </View>
             </Modal>
