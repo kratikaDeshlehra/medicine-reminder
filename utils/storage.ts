@@ -17,6 +17,7 @@ export interface Medication {
   refillAt: number;
   refillReminder: boolean;
   lastRefillDate?: string;
+  notes?: string;
 }
 
 export interface DoseHistory {

@@ -553,6 +553,9 @@ export default function AddMedicationScreen() {
                         <View style={styles.textAreaContainer}>
                             <TextInput style={styles.textArea} placeholder="Add notes or special instructions..."
                                 placeholderTextColor={'#999'}
+                                onChangeText={(text)=> {
+                                    setForm({...form,notes:text});
+                                }}
                             />
                         </View>
                     </View>

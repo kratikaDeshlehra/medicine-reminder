@@ -356,6 +356,11 @@ export default function HomeScreen() {
                                         <Ionicons name="time-outline" size={16} color="#666" />
                                         <Text style={styles.timeText}>{doseTime}</Text>
                                     </View>
+                                    {medication.notes ? (
+                                        <View style={styles.notesContainer}>
+                                            <Text style={styles.notesText}>{medication.notes}</Text>
+                                        </View>
+                                    ) : null}
                                 </View>
                                 {dose.taken ? (
                                     <View style={[styles.takenBadge]}>
@@ -431,6 +436,11 @@ export default function HomeScreen() {
                                             <Text style={styles.notificationTime}>
                                                 {doseTime}
                                             </Text>
+                                            {medication.notes ? (
+                                                <View style={styles.notesContainer}>
+                                                    <Text style={styles.notesText}>{medication.notes}</Text>
+                                                </View>
+                                            ) : null}
                                         </View>
                                     </View>
 
@@ -449,6 +459,14 @@ export default function HomeScreen() {
 
 
 const styles = StyleSheet.create({
+
+    notesContainer: {
+        marginTop: 4,
+    },
+    notesText: {
+        fontSize: 13,
+        color: '#555',
+    },
     container: {
         flex: 1,
         backgroundColor: "#f8f9fa",
