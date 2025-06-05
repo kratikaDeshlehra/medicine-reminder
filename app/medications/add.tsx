@@ -1,5 +1,5 @@
 
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Platform, Switch, Dimensions, Alert, } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Platform, Switch, Dimensions, Alert, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard, } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -286,298 +286,307 @@ export default function AddMedicationScreen() {
                     <Text style={styles.headerTitle}>New Medication</Text>
                 </View>
 
-                <ScrollView style={styles.formContainer} showsVerticalScrollIndicator={false}>
-                    <View style={styles.section}>
-                        <View style={styles.inputContainer}>
-                            <TextInput
-                                style={[styles.mainInput, errors.name && styles.inputError]}
-                                placeholder="Medication Name"
-                                placeholderTextColor={"#999"}
-                                value={form.name}
-                                onChangeText={(text) => {
-                                    setForm({ ...form, name: text })
-                                    if (errors.name) {
-                                        setErrors({ ...errors, name: "" })
-                                    }
-                                }}
-                            />
-                            {errors.name && (
-                                <Text style={styles.errorText}>
-                                    {errors.name}
-                                </Text>
-                            )}
-                        </View>
-                        <View style={styles.inputContainer}>
-                            <TextInput
-                                style={[styles.mainInput, errors.name && styles.inputError]}
-                                placeholder="Dosage (e.g., 500mg)"
-                                placeholderTextColor={"#999"}
-                                value={form.dosage}
-                                onChangeText={(text) => {
-                                    setForm({ ...form, dosage: text })
-                                    if (errors.name) {
-                                        setErrors({ ...errors, dosage: "" })
-                                    }
-                                }}
-                            />
-                            {errors.dosage && (
-                                <Text style={styles.errorText}>
-                                    {errors.dosage}
-                                </Text>
-                            )}
-                        </View>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <KeyboardAvoidingView
+                        style={{ flex: 1 }}
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} 
+                    > 
+
+                    <ScrollView style={styles.formContainer} showsVerticalScrollIndicator={false}>
                         <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>
-                                How often?
-                            </Text>
-                            {errors.frequency && (
-                                <Text style={styles.errorText}>
-                                    {errors.frequency}
-                                </Text>
-                            )}
-                            {renderFrequencyOptions()}
-
-
-                            <Text style={styles.sectionTitle}>For how long?</Text>
-
-                            {errors.duration && (
-                                <Text style={styles.errorText}>
-                                    {errors.duration}
-                                </Text>
-                            )}
-
-                            {renderDurationOptions()}
-
-
-                            <TouchableOpacity
-                                style={styles.dateButton}
-                                onPress={() => setShowDateTimePicker(true)}
-                            >
-                                <View style={styles.dateIconContainer}>
-                                    <Ionicons name='calendar' size={20} color={'#1a8e2d'} />
-
-                                </View>
-                                <Text style={styles.dateButtonText}>
-                                    Starts: {form.startDate.toLocaleDateString()}
-                                </Text>
-                                <Ionicons name="chevron-forward" size={20} color="#666" />
-                            </TouchableOpacity>
-
-                            {showDateTimePicker && (
-                                <DateTimePicker
-                                    value={form.startDate}
-                                    mode="date"
-                                    onChange={(event, date) => {
-                                        setShowDateTimePicker(false);
-                                        if (date) setForm({ ...form, startDate: date })
-                                    }}
-                                />
-                            )}
-
-                            {form.frequency && form.frequency !== 'As needed' && (
-                                <View style={styles.timesContainer}>
-                                    <Text style={styles.timesTitle}>Medication Times</Text>
-                                    {form.times.map((time, index) => (
-                                        <TouchableOpacity
-                                            key={index}
-                                            style={styles.timeButton}
-                                            onPress={() => {
-                                                setEditingTimeIndex(index);
-                                                setShowTimePicker(true);
-                                            }}
-                                        >
-                                            <View style={styles.timeIconContainer}>
-                                                <Ionicons name="time-outline" size={20} color="#1a8e2d" />
-                                            </View>
-                                            <Text style={styles.timeButtonText}>{time}</Text>
-                                            <Ionicons name="chevron-forward" size={20} color="#666" />
-                                        </TouchableOpacity>
-                                    ))}
-                                </View>
-                            )}
-
-
-                            {showTimePicker && editingTimeIndex != null && (
-                                <DateTimePicker mode='time'
-                                    value={(() => {
-                                        const [hours, minutes] = form.times[editingTimeIndex].split(":").map(Number);
-                                        const date = new Date();
-                                        date.setHours(hours, minutes, 0, 0);
-                                        return date;
-                                    })()}
-                                    onChange={(event, date) => {
-                                        setShowTimePicker(false);
-                                        if (date && editingTimeIndex != null) {
-                                            const newTime = date.toLocaleTimeString("default", {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                                hour12: false,
-                                            });
-                                            setForm((prev) => {
-                                                const updatedTimes = [...prev.times];
-                                                updatedTimes[editingTimeIndex] = newTime;
-                                                return { ...prev, times: updatedTimes };
-                                            });
-
-                                            setEditingTimeIndex(null);
-
-                                        }
-                                    }
-                                    }
-
-                                />
-                            )}
-
-                        </View>
-                    </View>
-
-                    {/* Reminder section  */}
-
-
-                    <View style={styles.section}>
-                        <View style={styles.card}>
-                            <View style={styles.switchRow}>
-                                <View style={styles.switchLabelContainer}>
-                                    <View style={styles.iconContainer}>
-                                        <Ionicons name="notifications" color="#1a8e2d" />
-                                    </View>
-                                    <View>
-                                        <Text style={styles.switchLabel}>Reminders</Text>
-                                        <Text style={styles.switchSubLabel}>Get notified when its time to take your medications </Text>
-                                    </View>
-                                </View>
-                                <Switch
-                                    value={form.reminderEnabled}
-                                    thumbColor={"white"}
-                                    trackColor={{ false: "#ddd", true: '#1a8e2d' }}
-                                    onValueChange={(value) => setForm({ ...form, reminderEnabled: value })}
-                                />
-                            </View>
-                        </View>
-                    </View>
-
-
-                    <View style={styles.section}>
-                        <View style={styles.card}>
-                            <View style={styles.switchRow}>
-                                <View style={styles.switchLabelContainer}>
-                                    <View style={styles.iconContainer}>
-                                        <Ionicons name='reload' size={20} color='#1a8e2d' />
-                                    </View>
-
-                                    <View>
-                                        <Text style={styles.switchLabel}>Refill Tracking</Text>
-                                        <Text style={styles.switchSubLabel}>Get notified when you need to refill</Text>
-                                    </View>
-                                </View>
-
-                                <Switch
-                                    value={form.refillReminder}
-                                    onValueChange={(value) => {
-                                        setForm({ ...form, refillReminder: value });
-                                        if (!value) {
-                                            setErrors({
-                                                ...errors,
-                                                currentSupply: "",
-                                                refillAt: "",
-                                            });
+                            <View style={styles.inputContainer}>
+                                <TextInput
+                                    style={[styles.mainInput, errors.name && styles.inputError]}
+                                    placeholder="Medication Name"
+                                    placeholderTextColor={"#999"}
+                                    value={form.name}
+                                    onChangeText={(text) => {
+                                        setForm({ ...form, name: text })
+                                        if (errors.name) {
+                                            setErrors({ ...errors, name: "" })
                                         }
                                     }}
-                                    trackColor={{ false: "#ddd", true: "#1a8e2d" }}
-                                    thumbColor="white" />
+                                />
+                                {errors.name && (
+                                    <Text style={styles.errorText}>
+                                        {errors.name}
+                                    </Text>
+                                )}
                             </View>
+                            <View style={styles.inputContainer}>
+                                <TextInput
+                                    style={[styles.mainInput, errors.name && styles.inputError]}
+                                    placeholder="Dosage (e.g., 500mg)"
+                                    placeholderTextColor={"#999"}
+                                    value={form.dosage}
+                                    onChangeText={(text) => {
+                                        setForm({ ...form, dosage: text })
+                                        if (errors.name) {
+                                            setErrors({ ...errors, dosage: "" })
+                                        }
+                                    }}
+                                />
+                                {errors.dosage && (
+                                    <Text style={styles.errorText}>
+                                        {errors.dosage}
+                                    </Text>
+                                )}
+                            </View>
+                            <View style={styles.section}>
+                                <Text style={styles.sectionTitle}>
+                                    How often?
+                                </Text>
+                                {errors.frequency && (
+                                    <Text style={styles.errorText}>
+                                        {errors.frequency}
+                                    </Text>
+                                )}
+                                {renderFrequencyOptions()}
 
-                            {form.refillReminder && (
-                                <View style={styles.refillInputs}>
-                                    <View style={styles.inputRow}>
-                                        <View style={[styles.inputRow, styles.flex1]}>
-                                            <TextInput
-                                                style={[
-                                                    styles.input,
-                                                    errors.currentSupply && styles.inputError,
-                                                ]}
-                                                placeholder="Current Supply"
-                                                placeholderTextColor="#999" keyboardType="numeric"
-                                                value={form.currentSupply}
-                                                onChangeText={(text) => {
-                                                    setForm({ ...form, currentSupply: text });
-                                                    if (errors.currentSupply) {
-                                                        setErrors({ ...errors, currentSupply: '' });
-                                                    }
+
+                                <Text style={styles.sectionTitle}>For how long?</Text>
+
+                                {errors.duration && (
+                                    <Text style={styles.errorText}>
+                                        {errors.duration}
+                                    </Text>
+                                )}
+
+                                {renderDurationOptions()}
+
+
+                                <TouchableOpacity
+                                    style={styles.dateButton}
+                                    onPress={() => setShowDateTimePicker(true)}
+                                >
+                                    <View style={styles.dateIconContainer}>
+                                        <Ionicons name='calendar' size={20} color={'#1a8e2d'} />
+
+                                    </View>
+                                    <Text style={styles.dateButtonText}>
+                                        Starts: {form.startDate.toLocaleDateString()}
+                                    </Text>
+                                    <Ionicons name="chevron-forward" size={20} color="#666" />
+                                </TouchableOpacity>
+
+                                {showDateTimePicker && (
+                                    <DateTimePicker
+                                        value={form.startDate}
+                                        mode="date"
+                                        onChange={(event, date) => {
+                                            setShowDateTimePicker(false);
+                                            if (date) setForm({ ...form, startDate: date })
+                                        }}
+                                    />
+                                )}
+
+                                {form.frequency && form.frequency !== 'As needed' && (
+                                    <View style={styles.timesContainer}>
+                                        <Text style={styles.timesTitle}>Medication Times</Text>
+                                        {form.times.map((time, index) => (
+                                            <TouchableOpacity
+                                                key={index}
+                                                style={styles.timeButton}
+                                                onPress={() => {
+                                                    setEditingTimeIndex(index);
+                                                    setShowTimePicker(true);
                                                 }}
-                                            />
+                                            >
+                                                <View style={styles.timeIconContainer}>
+                                                    <Ionicons name="time-outline" size={20} color="#1a8e2d" />
+                                                </View>
+                                                <Text style={styles.timeButtonText}>{time}</Text>
+                                                <Ionicons name="chevron-forward" size={20} color="#666" />
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
+                                )}
 
-                                            {errors.currentSupply && (
-                                                <Text style={styles.errorText}>
-                                                    {errors.currentSupply}
-                                                </Text>
-                                            )}
+
+                                {showTimePicker && editingTimeIndex != null && (
+                                    <DateTimePicker mode='time'
+                                        value={(() => {
+                                            const [hours, minutes] = form.times[editingTimeIndex].split(":").map(Number);
+                                            const date = new Date();
+                                            date.setHours(hours, minutes, 0, 0);
+                                            return date;
+                                        })()}
+                                        onChange={(event, date) => {
+                                            setShowTimePicker(false);
+                                            if (date && editingTimeIndex != null) {
+                                                const newTime = date.toLocaleTimeString("default", {
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                    hour12: false,
+                                                });
+                                                setForm((prev) => {
+                                                    const updatedTimes = [...prev.times];
+                                                    updatedTimes[editingTimeIndex] = newTime;
+                                                    return { ...prev, times: updatedTimes };
+                                                });
+
+                                                setEditingTimeIndex(null);
+
+                                            }
+                                        }
+                                        }
+
+                                    />
+                                )}
+
+                            </View>
+                        </View>
+
+                        {/* Reminder section  */}
+
+
+                        <View style={styles.section}>
+                            <View style={styles.card}>
+                                <View style={styles.switchRow}>
+                                    <View style={styles.switchLabelContainer}>
+                                        <View style={styles.iconContainer}>
+                                            <Ionicons name="notifications" color="#1a8e2d" />
+                                        </View>
+                                        <View>
+                                            <Text style={styles.switchLabel}>Reminders</Text>
+                                            <Text style={styles.switchSubLabel}>Get notified when its time to take your medications </Text>
+                                        </View>
+                                    </View>
+                                    <Switch
+                                        value={form.reminderEnabled}
+                                        thumbColor={"white"}
+                                        trackColor={{ false: "#ddd", true: '#1a8e2d' }}
+                                        onValueChange={(value) => setForm({ ...form, reminderEnabled: value })}
+                                    />
+                                </View>
+                            </View>
+                        </View>
+
+
+                        <View style={styles.section}>
+                            <View style={styles.card}>
+                                <View style={styles.switchRow}>
+                                    <View style={styles.switchLabelContainer}>
+                                        <View style={styles.iconContainer}>
+                                            <Ionicons name='reload' size={20} color='#1a8e2d' />
                                         </View>
 
                                         <View>
+                                            <Text style={styles.switchLabel}>Refill Tracking</Text>
+                                            <Text style={styles.switchSubLabel}>Get notified when you need to refill</Text>
+                                        </View>
+                                    </View>
 
-                                            <TextInput
-                                                style={[
-                                                    styles.input,
-                                                    errors.refillAt && styles.inputError,
-                                                ]}
-                                                value={form.refillAt}
-                                                placeholder="Alert at"
-                                                placeholderTextColor="#999" keyboardType="numeric"
-                                                onChangeText={(text) => {
-                                                    setForm({ ...form, refillAt: text });
-                                                    if (errors.refillAt) {
-                                                        setErrors({ ...errors, refillAt: '' });
-                                                    }
-                                                }}
-
-                                            />{
-                                                errors.refillAt && (
-                                                    <Text style={styles.errorText}>{errors.refillAt}</Text>
-                                                )
+                                    <Switch
+                                        value={form.refillReminder}
+                                        onValueChange={(value) => {
+                                            setForm({ ...form, refillReminder: value });
+                                            if (!value) {
+                                                setErrors({
+                                                    ...errors,
+                                                    currentSupply: "",
+                                                    refillAt: "",
+                                                });
                                             }
+                                        }}
+                                        trackColor={{ false: "#ddd", true: "#1a8e2d" }}
+                                        thumbColor="white" />
+                                </View>
+
+                                {form.refillReminder && (
+                                    <View style={styles.refillInputs}>
+                                        <View style={styles.inputRow}>
+                                            <View style={[styles.inputRow, styles.flex1]}>
+                                                <TextInput
+                                                    style={[
+                                                        styles.input,
+                                                        errors.currentSupply && styles.inputError,
+                                                    ]}
+                                                    placeholder="Current Supply"
+                                                    placeholderTextColor="#999" keyboardType="numeric"
+                                                    value={form.currentSupply}
+                                                    onChangeText={(text) => {
+                                                        setForm({ ...form, currentSupply: text });
+                                                        if (errors.currentSupply) {
+                                                            setErrors({ ...errors, currentSupply: '' });
+                                                        }
+                                                    }}
+                                                />
+
+                                                {errors.currentSupply && (
+                                                    <Text style={styles.errorText}>
+                                                        {errors.currentSupply}
+                                                    </Text>
+                                                )}
+                                            </View>
+
+                                            <View>
+
+                                                <TextInput
+                                                    style={[
+                                                        styles.input,
+                                                        errors.refillAt && styles.inputError,
+                                                    ]}
+                                                    value={form.refillAt}
+                                                    placeholder="Alert at"
+                                                    placeholderTextColor="#999" keyboardType="numeric"
+                                                    onChangeText={(text) => {
+                                                        setForm({ ...form, refillAt: text });
+                                                        if (errors.refillAt) {
+                                                            setErrors({ ...errors, refillAt: '' });
+                                                        }
+                                                    }}
+
+                                                />{
+                                                    errors.refillAt && (
+                                                        <Text style={styles.errorText}>{errors.refillAt}</Text>
+                                                    )
+                                                }
+                                            </View>
+
+
                                         </View>
 
 
                                     </View>
 
-
-                                </View>
-
-                            )}
+                                )}
+                            </View>
                         </View>
-                    </View>
 
 
-                    <View style={styles.section}>
-                        <View style={styles.textAreaContainer}>
-                            <TextInput style={styles.textArea} placeholder="Add notes or special instructions..."
-                                placeholderTextColor={'#999'}
-                                onChangeText={(text)=> {
-                                    setForm({...form,notes:text});
-                                }}
-                            />
+                        <View style={styles.section}>
+                            <View style={styles.textAreaContainer}>
+                                <TextInput style={styles.textArea} placeholder="Add notes or special instructions..."
+                                    placeholderTextColor={'#999'}
+                                    onChangeText={(text) => {
+                                        setForm({ ...form, notes: text });
+                                    }}
+                                />
+                            </View>
                         </View>
-                    </View>
 
-                </ScrollView>
+                    </ScrollView>
+                    </KeyboardAvoidingView>
+                    </TouchableWithoutFeedback>
 
 
-                <View style={styles.footer}>
-                    <TouchableOpacity style={[styles.saveButton, isSubmitting && styles.saveButtonDisabled]} onPress={() => handleSave()}>
-                        <LinearGradient colors={["#1a8e2d", "#146922"]} style={styles.saveButtonGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
-                            <Text style={styles.saveButtonText}>
-                                {isSubmitting ? 'Adding...' : 'Add medication'}
+                    <View style={styles.footer}>
+                        <TouchableOpacity style={[styles.saveButton, isSubmitting && styles.saveButtonDisabled]} onPress={() => handleSave()}>
+                            <LinearGradient colors={["#1a8e2d", "#146922"]} style={styles.saveButtonGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+                                <Text style={styles.saveButtonText}>
+                                    {isSubmitting ? 'Adding...' : 'Add medication'}
 
+                                </Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.cancelButton} onPress={() => router.back()} disabled={isSubmitting}>
+                            <Text style={styles.cancelButtonText}>
+                                Cancel
                             </Text>
-                        </LinearGradient>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.cancelButton} onPress={() => router.back()} disabled={isSubmitting}>
-                        <Text style={styles.cancelButtonText}>
-                            Cancel
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+                        </TouchableOpacity>
+                    </View>
             </View>
 
 
@@ -800,7 +809,7 @@ const styles = StyleSheet.create({
     inputRow: {
         flexDirection: "row",
         marginTop: 15,
-        gap:10,
+        gap: 10,
     },
     flex1: {
         flex: 1,

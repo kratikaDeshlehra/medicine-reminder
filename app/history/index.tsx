@@ -326,6 +326,7 @@ const styles = StyleSheet.create({
     },
     dateGroup: {
         marginBottom: 25,
+        margin:15,
     },
     dateHeader: {
         fontSize: 16,
