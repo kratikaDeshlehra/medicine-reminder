@@ -42,6 +42,20 @@ const QUICK_ACTIONS = [
         color: "#E64A19",
         gradient: ["#FF5722", "#E64A19"] as [string, string],
     },
+    // {
+    //     icon: "document-text-outline" as const,
+    //     label: "Prescription\nReader",
+    //     route: "/prescription-reader" as const,
+    //     color: "#6A1B9A",
+    //     gradient: ["#AB47BC", "#6A1B9A"] as [string, string],
+    // },
+    {
+        icon: "leaf-outline" as const,
+        label: "Breathing\nExercise",
+        route: "/breathe" as const,
+        color: "#00796B",
+        gradient: ["#4DB6AC", "#00796B"] as [string, string],
+    },
 ];
 
 
