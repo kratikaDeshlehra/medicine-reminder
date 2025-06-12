@@ -56,6 +56,13 @@ const QUICK_ACTIONS = [
         color: "#00796B",
         gradient: ["#4DB6AC", "#00796B"] as [string, string],
     },
+    {
+        icon: "female-outline" as const,
+        label: "Period\nTracker",
+        route: "/period-tracker",
+        color: "#B39DDB",
+        gradient: ["#E1BEE7", "#BA68C8"] as [string, string],
+    },
 ];
 
 
@@ -315,7 +322,7 @@ export default function HomeScreen() {
 
             <View style={styles.section}>
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Today`s Schedule</Text>
+                    <Text style={styles.sectionTitle}>{`Today's Schedule`}</Text>
                     <Link href="/calendar" asChild>
                         <TouchableOpacity>
                             <Text style={styles.seeAllButton}>See All</Text>
