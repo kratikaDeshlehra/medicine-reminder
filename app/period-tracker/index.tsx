@@ -223,11 +223,11 @@ const PeriodTracker: React.FC = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.greeting}>{getGreeting()}</Text>
-            <View>  {isPeriodOngoing() && (
+            {isPeriodOngoing() && (
                 <Text style={styles.periodMessage}>
                     {`It's your day ${currentDay}`}
                 </Text>
-            )} </View>
+            )}
 
             <View style={{ marginBottom: 13, paddingBottom: 0 }}>
                 <HorizontalCalendar />

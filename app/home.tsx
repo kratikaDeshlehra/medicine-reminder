@@ -443,7 +443,7 @@ export default function HomeScreen() {
 
                                 return (
 
-                                    <View key={medication.id} style={styles.notificationItem}>
+                                    <View key={dose.id} style={styles.notificationItem}>
                                         <View style={styles.notificationIcon}>
                                             <Ionicons name="medical" size={24} color={medication.color} />
                                         </View>
