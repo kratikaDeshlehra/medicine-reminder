@@ -60,7 +60,7 @@ Make sure you have the following installed:
 This will open the Metro Bundler in your browser.
 Scan the QR code using the Expo Go app on your Android or iOS device to launch SehatSathi.
 
-🛠️ Technology Stack
+##🛠️ Technology Stack
 React Native – Build native mobile apps using React.
 
 Expo – Framework and platform for universal React apps.
