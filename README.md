@@ -48,24 +48,15 @@ Make sure you have the following installed:
    cd medicine-reminder
    Install dependencies:
 
-Using npm:
+2. **Using npm:**
 
-bash
-Copy
-Edit
-npm install
-Or using yarn:
+    ```bash
+    npm install
+    
+3. **Start the development server:**
 
-bash
-Copy
-Edit
-yarn install
-Start the development server:
-
-bash
-Copy
-Edit
-npx expo start
+   ```bash
+     npx expo start
 This will open the Metro Bundler in your browser.
 Scan the QR code using the Expo Go app on your Android or iOS device to launch SehatSathi.
 
@@ -80,9 +71,4 @@ Async Storage – Persistent local storage for React Native.
 
 Expo Notifications – Manage and schedule local notifications.
 
-❤️ Acknowledgements
-Huge thanks to the Expo and React Native communities for the great tools and documentation.
 
-Icons provided by Feather Icons.
-
-Soothing background music sourced from royalty-free libraries.
