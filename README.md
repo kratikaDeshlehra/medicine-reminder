@@ -30,6 +30,17 @@ SehatSathi is a comprehensive mobile application designed to be your all-in-one 
 
 Follow these steps to run the project locally for development and testing.
 
+### 🛠️ Technology Stack
+React Native – Build native mobile apps using React.
+
+Expo – Framework and platform for universal React apps.
+
+Expo Router – File-based routing for React Native and web.
+
+Async Storage – Persistent local storage for React Native.
+
+Expo Notifications – Manage and schedule local notifications.
+
 ### ✅ Prerequisites
 
 Make sure you have the following installed:
@@ -60,15 +71,6 @@ Make sure you have the following installed:
 This will open the Metro Bundler in your browser.
 Scan the QR code using the Expo Go app on your Android or iOS device to launch SehatSathi.
 
-##🛠️ Technology Stack
-React Native – Build native mobile apps using React.
 
-Expo – Framework and platform for universal React apps.
-
-Expo Router – File-based routing for React Native and web.
-
-Async Storage – Persistent local storage for React Native.
-
-Expo Notifications – Manage and schedule local notifications.
 
 
