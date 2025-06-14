@@ -133,7 +133,7 @@ export default function AddMedicationScreen() {
                         ]}
                         onPress={() => {
                             setSelectedDuration(dur.label);
-                            setForm({ ...form, duration: dur.label });
+                            setForm({ ...form, duration: dur.label});
                         }}
                     >
                         <Text
@@ -270,8 +270,6 @@ export default function AddMedicationScreen() {
         }
 
     }
-
-
 
     return (
         <View style={styles.container}>
@@ -521,7 +519,7 @@ export default function AddMedicationScreen() {
                                                 )}
                                             </View>
 
-                                            <View>
+                                            <View style={[styles.inputRow,styles.flex1]}>
 
                                                 <TextInput
                                                     style={[

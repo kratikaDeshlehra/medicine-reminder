@@ -42,13 +42,7 @@ const QUICK_ACTIONS = [
         color: "#E64A19",
         gradient: ["#FF5722", "#E64A19"] as [string, string],
     },
-    // {
-    //     icon: "document-text-outline" as const,
-    //     label: "Prescription\nReader",
-    //     route: "/prescription-reader" as const,
-    //     color: "#6A1B9A",
-    //     gradient: ["#AB47BC", "#6A1B9A"] as [string, string],
-    // },
+
     {
         icon: "leaf-outline" as const,
         label: "Breathing\nExercise",
@@ -165,8 +159,9 @@ export default function HomeScreen() {
                 const durationDays = parseInt(med.duration.split(" ")[0]);
 
                 // For ongoing medications or if within duration
+                const isOngoing = med.duration.toLowerCase() === 'ongoing';
                 if (
-                    durationDays === -1 ||
+                    isOngoing ||
                     (today >= startDate &&
                         today <=
                         new Date(
@@ -581,12 +576,13 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderRadius: 16,
         padding: 16,
-        marginBottom: 12,
+        marginBottom: 24,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.05,
         shadowRadius: 8,
         elevation: 3,
+
     },
     doseBadge: {
         width: 50,

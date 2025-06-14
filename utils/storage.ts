@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Alert } from 'react-native';
 
 const MEDICATIONS_KEY = "@medications";
 const DOSE_HISTORY_KEY = "@dose_history";
@@ -93,7 +94,7 @@ export async function recordDose(
         med.currentSupply -= 1;
         await updateMedication(med);
       }
-      
+
     }
   } catch (error) {
     console.error("Error recording dose:", error);
@@ -148,10 +149,19 @@ export async function addDoses(medication: Medication): Promise<void> {
     const historyRaw = await AsyncStorage.getItem(DOSE_HISTORY_KEY);
     const history: DoseHistory[] = historyRaw ? JSON.parse(historyRaw) : [];
 
-
-    const startDate = new Date(medication.startDate);
-    const duration = parseInt(medication.duration, 10);
     const times = medication.times;
+    const startDate = new Date(medication.startDate);
+
+
+    // const duration = parseInt(medication.duration, 10);
+    let duration = 0;
+    if (medication.duration.toLowerCase() === "ongoing") {
+      duration = 100; // Generate for 100 days
+    } else {
+      const durationMatch = medication.duration.match(/^(\d+)/);
+      duration = durationMatch ? parseInt(durationMatch[1]) : 0;
+    }
+
 
     for (let day = 0; day < duration; day++) {
       const baseDate = new Date(startDate);
@@ -174,6 +184,8 @@ export async function addDoses(medication: Medication): Promise<void> {
     }
 
     await AsyncStorage.setItem(DOSE_HISTORY_KEY, JSON.stringify(history));
+
+
   } catch (error) {
     console.error("Failed to generate dose history:", error);
     throw error;

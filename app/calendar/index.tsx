@@ -127,7 +127,8 @@ export default function CalendarScreen() {
             .filter((medication) => {
                 const medStartDate = new Date(medication.startDate);
                 const durationDays = parseInt(medication.duration.split(" ")[0]);
-                return (durationDays === -1 || (selectedDate >= medStartDate && selectedDate <=
+                 const isOngoing = medication.duration.toLowerCase() === 'ongoing';
+                return (isOngoing|| (selectedDate >= medStartDate && selectedDate <=
                     new Date(
                         medStartDate.getTime() + (durationDays - 1) * 24 * 60 * 60 * 1000
                     )));
