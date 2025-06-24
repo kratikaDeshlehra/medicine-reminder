@@ -1,50 +1,76 @@
-# Welcome to your Expo app 👋
+# SehatSathi - Your Health Companion 🩺💊
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+SehatSathi is a comprehensive mobile application designed to be your all-in-one health companion. Built with **React Native** and **Expo**, it ensures you never miss a dose, helps you manage your medication inventory, provides tools for relaxation, and tracks menstrual cycles — all within a clean, user-friendly interface.
 
-## Get started
+---
 
-1. Install dependencies
+## ✨ Features
+
+- **🕒 Medication Reminders:**  
+  Set up customizable reminders for your medications. You'll receive timely notifications so you never miss a dose.
+
+- **📦 Refill Tracking:**  
+  Track your medication inventory. Get notified when it’s time to reorder to avoid running out.
+
+- **🧘‍♀️ Breathing Exercises:**  
+  Access guided breathing routines with calming music to reduce stress and improve focus.
+
+- **🩸 Period Tracker:**  
+  Log menstrual cycles, symptoms, and predict upcoming periods using a simple and intuitive interface.
+
+- **🔐 Secure Local Storage:**  
+  All personal health data is stored securely on the device using `AsyncStorage`.
+
+- **📱 Cross-Platform:**  
+  Powered by Expo, the app runs seamlessly on both Android and iOS from a single codebase.
+
+---
+
+## 🚀 Getting Started
+
+Follow these steps to run the project locally for development and testing.
+
+### 🛠️ Technology Stack
+React Native – Build native mobile apps using React.
+
+Expo – Framework and platform for universal React apps.
+
+Expo Router – File-based routing for React Native and web.
+
+Async Storage – Persistent local storage for React Native.
+
+Expo Notifications – Manage and schedule local notifications.
+
+### ✅ Prerequisites
+
+Make sure you have the following installed:
+
+- [Node.js](https://nodejs.org/)
+- npm or yarn
+- [Expo CLI](https://docs.expo.dev/get-started/installation/)
+- [Expo Go](https://expo.dev/client) app on your mobile device (iOS/Android)
+
+### 📦 Installation
+
+1. **Clone the repository:**
 
    ```bash
-   npm install
-   ```
+   git clone https://github.com/kratikadeshlehra/medicine-reminder.git
+   cd medicine-reminder
+   Install dependencies:
 
-2. Start the app
+2. **Using npm:**
+
+    ```bash
+    npm install
+    
+3. **Start the development server:**
 
    ```bash
-   npx expo start
-   ```
+     npx expo start
+This will open the Metro Bundler in your browser.
+Scan the QR code using the Expo Go app on your Android or iOS device to launch SehatSathi.
 
-In the output, you'll find options to open the app in a
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
